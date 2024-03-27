@@ -1,0 +1,9 @@
+大家首先可以随便找一个 Vue 项目，看下其中 VueRouter 的使用，大概分为以下：
+1. VueRouter 是一个 Vue 插件，需要使用 Vue.use(VueRouter) 注册
+Vue.use 接收一个函数或者对象，如果是一个方法则直接调用，如果是一个对象则调用其 install 方法。
+install 方法接收 2 个参数，一个是 Vue 的构造函数，一个是可选的选项对象（这里不做设置）。
+2. const routes = [ { path: '/', name: 'Index', component: Index } ...]
+   const router = new VueRouter({ routes })
+3. new Vue({ router, render: h => h(App) }).$mount('#app')   
+4. <router-link to="/">Index</router-link> 
+   <router-view/>

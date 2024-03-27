@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue 基础结构</title>
+</head>
+<body>
+  <div id="app">
+    <h1>差值表达式</h1>
+      <h3>{{ msg }}</h3>
+      <h3>{{ count }}</h3>
+    <h1>v-text</h1>
+      <div v-text="msg"></div>
+    <h1>v-model</h1>
+      <input type="text" v-model="msg">
+      <input type="text" v-model="count">
+  </div>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+  <script src="./minivue/js1/dep.js"></script>
+  <script src="./minivue/js1/watcher.js"></script>
+  <script src="./minivue/js1/compiler.js"></script>
+  <script src="./minivue/js1/observer.js"></script>
+  <script src="./minivue/js1/vue.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'Hello Vue',
+        count: 20,
+        person: {name: 'zs'}
+      }
+    })
+    console.log(vm.msg)
+    // vm.msg = {'test': 'Hello Vue'}
+  </script>
+  <script>
+    function A(a) {
+        function B(a) {
+            a = {sdf:1}
+        }
+        B(a)
+        return a
+    }
+    var b = A({o:9})
+  </script>
+</body>
+</html>
+
+<!-- Object.defineProperty  Proxy -->
+
+<!-- 
+1. vm 中具有 count 和 msg 属性
+2. count 和 msg 都具有 get/set 方法
+vue 构造函数内部需要将 data 中的成员转换为 getter 和 setter 
+注入到 vue 实例上。这样方便在其他地方使用的时候，
+可以直接使用 this.msg 和 this.count 来使用。
+3. data 选项中的成员记录到了 $data 中，并且转换成了 getter 和 setter。
+ $data 中的 setter 是真正监视数据变化的地方。
+4. $options 把构造函数的参数记录到了 $options 当中。
+5. _data 和 $data 指向的是同一个对象，_ 开头的是私有成员，
+$ 开头的是公共成员
+6. $el 对应选项中的 el，可以是选择器，也可以是一个 Dom 对象
+ -->
+
+ <!-- 
+   接收参数
+   将data中的属性注入到vue实例中，转换为getter、setter
+   调用 observer 监听 data 中所有属性的变化
+   调用compiler解析指令和插值表达式
+  -->

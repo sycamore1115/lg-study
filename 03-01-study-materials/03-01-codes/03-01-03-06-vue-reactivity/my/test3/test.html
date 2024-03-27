@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="app">
+    <div>差值表达式</div>
+      <span>{{ msg }}</span>
+      <span>{{ count }}</span>
+    <div>v-text</div>
+      <span v-text="msg"></span>
+    <div>v-model</div>
+      <input type="text" v-model="msg">
+      <input type="text" v-model="count">
+  </div>
+  <script src="./dep.js"></script>
+  <script src="./watcher.js"></script>
+  <script src="./compiler.js"></script>
+  <script src="./observer.js"></script>
+  <script src="./vue.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'test',
+        count: 20,
+        person: {name: 'zs'}
+      }
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="app">
+    <div>差值表达式</div>
+      <span>{{ msg }}</span>
+      <span>{{ count }}</span>
+    <div>v-text</div>
+      <span v-text="msg"></span>
+    <div>v-model</div>
+      <input type="text" v-model="msg">
+      <input type="text" v-model="count">
+  </div>
+  <script src="./dep.js"></script>
+  <script src="./watcher.js"></script>
+  <script src="./compiler.js"></script>
+  <script src="./observer.js"></script>
+  <script src="./vue.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'test',
+        count: 20,
+        person: {name: 'zs'}
+      }
+    })
+  </script>
+</body>
+</html>
+
+<!-- 
+
+  全局环境的变量对象始终存在
+创建函数的时候，会预先创建一个包含全局变量对象的作用域链，
+保存在这个函数对象的[[scope]]属性中
+当一个函数被调用时：
+
+会创建一个函数的执行环境
+复制[[scope]]属性中的对象创建相应的作用域链
+使用arguments和其他命名参数的值来初始化函数的活动对象
+将函数的活动对象推入函数作用域链的最前端
+
+
+函数的局部环境的变量对象，只在函数执行过程中存在，执行完就被销毁了。
+
+function createComparisionFunction (propertyName) {
+  return function(object1, object2) {
+    var value1 = object1[propertyName]
+    var value2 = object2[propertyName]
+    var a = value1 > value2 ? 1: -1
+    return a
+  }
+}
+// 调用外层函数，同时创建内层函数
+var compareName = createComparisionFunction('name')
+// 调用内层函数
+var res = compareName({name: 'Nicholas'}, {name: 'Greg'})
+
+ -->

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="app">
+    <div>差值表达式</div>
+      <span>{{ msg }}</span>
+      <span>{{ count }}</span>
+    <div>v-text</div>
+      <span v-text="msg"></span>
+    <div>v-model</div>
+      <input type="text" v-model="msg">
+      <input type="text" v-model="count">
+    <div>v-html</div>
+      <div v-html="htmlContent"></div>
+    <div>v-on</div>
+      <!-- <button v-on:click="count += 1">Add 1</button> -->
+      <button v-on:click="handleClick">点击</button>
+      <!-- <button v-on:click="say('hi')">Say hi</button> -->
+  </div>
+  <script src="./dep.js"></script>
+  <script src="./watcher.js"></script>
+  <script src="./compiler.js"></script>
+  <script src="./observer.js"></script>
+  <script src="./vue.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'test',
+        count: 20,
+        person: {name: 'zs'},
+        htmlContent :'<span style="color: red">This should be red.</span>'
+      },
+      methods: {
+        handleClick: function () {
+          this.count += 1
+        },
+        // say: function (message) {
+        //   alert(message)
+        // }
+      }
+    })
+  </script>
+</body>
+</html>

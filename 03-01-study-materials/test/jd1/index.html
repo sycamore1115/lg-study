@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="cn">
+<body>
+  <div id="app">
+    <h3>{{ dog.name }}</h3>
+    <button v-on:click="clickHandler">clickHandler</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script>
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            dog: {}
+        },
+        methods: {
+            clickHandler () {
+                // 该 name 属性是否是响应式的
+                // this.dog.name = 'Trump'
+                // Vue.set(this.dog, 'name', 'Trump')
+                this.$set(this.dog, 'name', 'Trump')
+            }
+        }
+    })
+  </script>
+</body>
+</html>

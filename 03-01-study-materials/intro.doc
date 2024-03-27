@@ -1,0 +1,107 @@
+## h：创建 vnode 对象
+## init: 接收模块数组，返回 patch 函数
+  cbs 存储模块的钩子函数，包含 create/update/remove/destroy/pre/post
+  init 返回了 patch 构成了闭包，在调用 patch 时可以访问 init 中的 cbs 属性
+## patch: 比较新旧节点，更新 DOM
+   1. 如果新旧节点是相同节点，调用 patchVnode 方法
+   2. 不是相同节点：
+      调用 createElm 创建 vnode 对应的 Dom 元素，并存储到其 elm 属性当中
+      调用 insertBefore 将新创建的 DOM 插入到 dom 树上
+      调用 removeVnodes 移除旧 vnode 对应的元素
+
+新旧节点不同的案例：
+```js
+const patch = init([])
+let vnode = h('div#wrapper', {
+    hook: {
+        init (vnode) { console.log(vnode.elm) },  // 创建 DOM 之前执行的，获取不到 vnode 对应的 DOM 元素
+        create (emptyNode, vnode) { console.log(vnode.elm) }  // create：创建 DOM 完成之后执行的，其中可以获取 vnode 对应的 DOM 元素
+    }
+}, 'Hi')
+let app = document.querySelector('#app')
+patch(app, vnode)
+```
+### createElm
+```js
+createElm(vnode, insertedVnodeQueue)
+```
+1. 创建对应 tag/id/class 的 DOM 元素
+2. 触发模块的 create 钩子函数 create(oldVnode, vnode)
+3. 如果有 children，递归调用 createElm 创建子节点，子节点也会触发 create 钩子函数
+4. 如果有 text，创建文本节点追加到 elm 
+5. 触发用户设置的 create 钩子函数
+（模块中的 create 钩子是先父后子，而用户设置的 create 钩子是先子后父）
+6. 将用户设置的 insert 钩子函数推入 insertedVnodeQueue 队列，等元素插入到 dom 树再执行
+### removeVnodes  
+```js
+// 此案例中要删除 parent 父元素中的 oldVnode 
+removeVnodes(parent, [oldVnode], 0, 0)
+```
+1. 文本节点直接删除，没有 sel 的认为是文本节点
+2. 此案例中的 sel 为 div#wrapper，为元素节点
+   触发 vnode 的 destroy 钩子函数
+   调用 createRmCb 函数获取删除 DOM 元素的函数 rm
+   调用模块 cbs 中的 remove 钩子函数
+   如果用户传入了 remove 钩子函数，则在 remove 钩子函数中需要手动调用 rm
+   如果用户没有传入 remove 钩子函数，则直接调用 rm
+   (为了防止重复删除 DOM 元素，需要给 createRmCb 传递 listeners,
+   值为 cbs.remove.length + 1，也就是当在模块的 remove 钩子函数中执行 rm
+   的时候都不会真正删除节点，等执行完全部模块的 remove 钩子函数之后
+   执行的 rm 才会删除元素)
+   #### createRmCb 返回的 rm 
+   每执行一次 rm，先执行 --listeners，直到 listeners 为 0 才正在的调用 
+   removeChild 删除元素
+   ```js
+   // rm 函数
+   function rmCb () {
+      if (--listeners === 0) {
+        ...
+        api.removeChild(parent, childElm)
+      }
+    }
+   ```
+### addVnodes
+
+
+### patchVnode
+如果新旧节点是相同节点，调用 patchVnode 方法。
+
+## updateChildren
+updateChildren 中用到了 diff 算法，我们先看一下 diff 算法的介绍。
+### diff算法
+diff算法用于查找两棵树每一个节点的差异。当数据变化后，不直接操作 DOM，而是先比较 js 对象（vnode）是否发生变化，找到所有变化的位置，只最小化的更新变化的位置，从而提高性能。
+
+通常我们会想到遍历A树上的所有节点，让其中的每一个节点和B树上的每一个节点做对比，这样需要做大量的比较。Snabbdom 根据 DOM 的特点做了一些优化，因为 DOM 操作时很少会跨级别操作节点，所以可以只比较同级别的节点，从而减少比较次数。
+
+sameVnode 比较的就是 key 和 sel 相同。如果2个节点是 sameVnode，会重用之前的旧节点对应的 DOM，patchVnode 会对比差异然后将更新应用到重用的 DOM 元素上，如果文本元素和子元素也相同的话，就无需再操作 DOM。
+
+oldVnode 和 newVnode 节点之间的比较大致分为6种情况：
+1. oldVnode 的开始节点 == newVnode 的开始节点
+
+当比较两个节点的时候，先会比较两个节点的开始节点是否为 sameVnode，如果是则调用 patchVnode 比较差异然后更新，然后将开始节点置为第2个节点接着比较。
+
+2. oldVnode 的结束节点 == newVnode 的结束节点
+
+当比较到开始节点不再相等，就比较两个节点的结束节点，，如果是 sameVnode，则调用 patchVnode 比较差异然后更新，然后将开始节点置为倒数第2个节点接着比较。
+
+3. oldVnode 的开始节点 == newVnode 的结束节点
+
+比较 oldVnode 的开始节点和 newVnode 的结束节点，如果是 sameVnode，则调用 patchVnode 比较差异然后更新，将 oldVnode 的开始节点移动到最后，然后将 oldVnode 的第2个节点置为开始节点，将 newVnode 的倒数第2个节点置为结束节点，接着比较。
+
+4. oldVnode 的结束节点 == newVnode 的开始节点
+
+
+5. oldVnode 的开始节点 !== newVnode 的任何节点
+
+不是上述4种情况的，遍历 oldVnode 中的节点，没有查找到 newVnode 的开始节点，说明 newVnode 中的开始节点是一个新的节点，此时需要创建新的 DOM 元素，并插入到 oldVnode 的最前面。
+
+6. oldVnode 的开始节点 == newVnode 的中间某一节点
+
+不是上述4种情况的，遍历 oldVnode 中的节点，其中查找到了 newVnode 的开始节点，则调用 patchVnode 比较差异然后更新，再将这个节点移动到 oldVnode 的最前面。
+
+在结束遍历后，如果还有剩余节点要做以下处理：
+
+1. 老节点先遍历完，说明新节点有剩余，把新节点的剩余节点批量插入到 oldVnode 的最右边
+2. 新节点先遍历完，说明老节点有剩余，把老节点的剩余节点批量删除
+
+### 代码
