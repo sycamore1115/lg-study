@@ -103,7 +103,8 @@ class VueRouter {
             template: "<a :href='to'><slot></slot></a>"
         })
         // <router-view/>
-        // 根据当前路由地址(this.data.current)在 routeMap 中找到对应显示组件的
-        _Vue.component("router-view", this.options.routes.find(this.data.current === route.path))
+        // 根据当前路由地址(this.data.current)在 路由规则 中找到对应显示组件的
+        const route = this.options.routes.find(i => this.data.current === i.path)
+        _Vue.component("router-view", route.component)
     }
 }
