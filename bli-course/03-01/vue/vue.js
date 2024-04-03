@@ -1,4 +1,3 @@
-// 先记住有 5 个类
 class Dep {
 
 }
@@ -8,11 +7,35 @@ class Watcher{
 class Compiler {
 
 }
-// 将 data 中的属性转换为get/set
 class Observe {
-
+    constructor(data) {
+        this.walk(data)
+    }
+    walk(data) {
+        if (!data || typeof data !== 'object') return
+        Object.keys(data).forEach(key => {
+            this.defineReactive(data, key)
+        })
+    }
+    defineReactive(data, key) {
+        let value = data[key]
+        this.walk(value)
+        const self = this
+        Object.defineProperty(data, key, {
+            configurable: true,
+            enumerable: true,
+            get() {
+                return value
+            },
+            set(newValue) {
+                if (newValue === value) return
+                value = newValue
+                self.walk(newValue)
+                // 发送通知
+            }
+        })
+    }
 }
-// Vue 类中整理传入的参数options，将 data 中的属性添加到 vm 上并将转换为get/set
 class Vue {
     constructor(options) {
         this.$options = options || {}
@@ -20,15 +43,15 @@ class Vue {
         this.$el = typeof options.el === 'string' ? document.querySelector(options.el) : options.el 
         this._proxyData(this.$data)
         new Observe(this.$data)
-        new Compiler(this)
+        // new Compiler(this)
     }
     _proxyData(data) {
         Object.keys(data).forEach(key => {
-            Object.defineProperties(this, key, {
+            Object.defineProperty(this, key, {
                 configurable: true,
                 enumerable: true,
                 get() {
-                    return data.key
+                    return data[key]
                 },
                 set(newValue) {
                     if (newValue == data[key]) return
