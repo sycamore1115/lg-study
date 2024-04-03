@@ -1,7 +1,7 @@
 import Vue from 'vue'
 // hello-world\src\router\index.js
 // import VueRouter from 'vue-router'
-import VueRouter from './my-router'
+import VueRouter from './my-router2'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 
@@ -21,8 +21,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
-  mode: 'hash',
+  mode: 'history',
+  // mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })
