@@ -8,8 +8,9 @@ class Watcher{
 class Compiler {
 
 }
-/** 接下来看到 $data 属性，data 选项中的成员记录到了 $data 中，并且转换成了 getter 和 setter。
- * $data 中的 setter 是真正监视数据变化的地方。
+/** 
+接下来看到 $data 属性，data 选项中的成员记录到了 $data 中，并且转换成了 getter 和 setter。
+$data 中的 setter 是真正监视数据变化的地方。
 
 我们需要在 Observe 类中处理 $data 相关的操作：
 1. 将 $data 中的属性转换成响应式对象
@@ -39,7 +40,7 @@ class Observe {
         })
     }
 }
-class Observe {
+class Observe1 {
     constructor(data) {
         this.walk(data)
     }
@@ -69,11 +70,11 @@ class Observe {
     }
 }
 /**
- * 打印的 vue 实例包含很多属性，我们需要模拟的简单功能只需要实现几个简单的属性：
- * $options：传入 vue 构造函数的参数
- * $data：参数中的 data 属性
- * $el：参数中 el 属性对应的页面元素
- * 我们还能看见 data 中的属性都直接显示在 vm 上了，所以我们需要将 data 中的属性添加到 vm 上并将转换为get/set
+打印的 vue 实例包含很多属性，我们需要模拟的简单功能只需要实现几个简单的属性：
+$options：传入 vue 构造函数的参数
+$data：参数中的 data 属性
+$el：参数中 el 属性对应的页面元素
+我们还能看见 data 中的属性都直接显示在 vm 上了，所以我们需要将 data 中的属性添加到 vm 上并将转换为get/set
  */
 class Vue {
     constructor(options) {
