@@ -1,28 +1,26 @@
 let _Vue = null
-export default class VueRouter{
+export default class VueRouter {
     static install(Vue) {
-        _Vue = Vue
         if (VueRouter.install.installed) return
         VueRouter.install.installed = true
         Vue.mixin({
             beforeCreate() {
-                if (this.$options.router) {
-                    Vue.prototype.$router = this.$options.router
-                }
+                if (this.$options.router) Vue.prototype.$router = this.$options.router
             }
         })
+        _Vue = Vue
     }
     constructor(options) {
         this.options = options
         this.data = _Vue.observable({current: '/'})
-        this.initComponent()
+        this.initComponent(_Vue)
         this.initEvent()
     }
-    initComponent() {
+    initComponent(Vue) {
         const self = this
-        _Vue.component('router-link',{
+        Vue.component('router-link', {
             props: {to: String},
-            template: '<a href="" @click="handleClick"><slot></slot></a>',
+            template: '<a href="" v-on:click="handleClick"><slot></slot></a>',
             methods: {
                 handleClick(e) {
                     e.preventDefault()
@@ -35,10 +33,10 @@ export default class VueRouter{
                 }
             }
         })
-        _Vue.component('router-view',{
+        Vue.component('router-view', {
             render(h) {
-                const route = self.options.routes.find(i => i.path === self.data.current)
-                return h(route.component)
+                let router = self.options.routes.find(route => route.path === self.data.current)
+                return h(router.component)
             }
         })
     }

@@ -46,4 +46,41 @@ dist 目录下有很多 js 文件，这些 js 文件就是不同版本的 vue，
 
 调试：
 打开 examples\grid\index.html 文件，其中引入的是 ../../dist/vue.min.js 文件，我们要改成 ../../dist/vue.js
+在浏览器访问这个 index.html，打开控制台，在 Sources 我们可以看到 dist 和 src 目录，只有开启了 sourcemap
+才可以在这里看到 src 目录。
+
+然后打开 grid.js，找到创建 Vue 的位置打上断点，就可以进入 Vue 源码进行调试啦。
+
+首先进入的是 vue\src\core\instance\index.js 
+
+不同版本之间 Vue 的区别
+首先通过 npm run build 打包出不同版本的 vue
+
+
+vue.common.dev.js  vue.common.prod.js
+vue.esm.browser.js  vue.esm.browser.min.js  vue.esm.js
+vue.js  vue.min.js
+
+vue.runtime.common.dev.js  vue.runtime.common.prod.js
+vue.runtime.esm.js 
+vue.runtime.js  vue.runtime.min.js 
+
+经过总结，我们可以得出命名规则：
+'vue' + 'runtime'/'' + ''/'common'/'esm' + 'js'
+
+'runtime'/'':此字段表示vue是否为运行时版本
+编译器：将 template 编译成为 render 渲染函数的代码，体积大、效率低。
+运行时版本：用来创建 Vue 实例、渲染并处理虚拟 DOM 等的代码，体积小、效率高。
+           不支持 template，我们需要使用 render 代替。名称中包含 runtime 的就是运行时版本。
+完整版：编译器 + 运行时版本，名称中不包含 runtime 的就是完整版本。
+
+''/'common'/'esm'：此字段表明vue文件的模块方式
+没有标明模块方式的文件就是 UMD 版本，标明 common 的文件使用的就是 CommonJS，
+标明 esm 的文件使用的就是 ES Modules，这是当前最主流的模块方式。
+
+Vue-CLI 创建的项目默认使用的是  vue.runtime.esm.js
+
+
+npm run dev
+
  */

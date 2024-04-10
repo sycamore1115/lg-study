@@ -10,7 +10,7 @@ class Compiler {
     }
 
     compiler(el) {
-        let childNodes = el.childNodes
+        const childNodes = el.childNodes
         Array.from(childNodes).forEach(node => {
             if (this.isTextNode(node)) {
                 this.compilerText(node)

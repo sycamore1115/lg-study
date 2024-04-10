@@ -40,6 +40,35 @@ class Observe {
         })
     }
 }
+// 此时再去浏览器中打印 vm，可以看到 $data 中的数据也
+class Observer {
+    constructor(data) {
+        this.walk(data)
+    }
+    walk(data) {
+        if (!data || typeof data !== 'object') return
+        Object.keys(data).forEach(key => {
+            this.defineReactive(data, key)
+        })
+    }
+    defineReactive(data, key) {
+        let value = data[key]
+        this.walk(value)
+        const self = this
+        Object.defineProperty(data, key, {
+            configurable: true,
+            enumerable: true,
+            get() {
+                return value
+            },
+            set(newValue) {
+                if (newValue === value) return
+                value = newValue
+                self.walk(newValue)
+            }
+        })
+    }
+}
 class Observe1 {
     constructor(data) {
         this.walk(data)
