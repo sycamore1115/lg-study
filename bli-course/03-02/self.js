@@ -79,8 +79,7 @@ vue.runtime.js  vue.runtime.min.js
 标明 esm 的文件使用的就是 ES Modules，这是当前最主流的模块方式。
 
 Vue-CLI 创建的项目默认使用的是  vue.runtime.esm.js
-
-
-npm run dev
+浏览器是不支持单文件组件的，需要在打包的时候将这些单文件组件转换为 js 对象，
+其中会将 template 模板转换为 render 函数。
 
  */

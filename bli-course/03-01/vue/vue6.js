@@ -10,7 +10,7 @@ class Dep {
     }
 }
 class Watcher {
-    constructor(vm, key, cb) {
+    constructor(vm , key, cb) {
         this.cb = cb
         Dep.target = this
         vm[key]
@@ -26,7 +26,7 @@ class Compiler {
         this.compiler(vm.$el)
     }
     compiler(el) {
-        let childNodes = el.childNodes || []
+        let childNodes = el.chileNodes || []
         Array.from(childNodes).forEach(node => {
             if(this.isTextNode(node)){
                 this.compilerText(node)
@@ -41,10 +41,10 @@ class Compiler {
         let reg = /\{\{(.+?)\}\}/
         if (reg.test(value)) {
             let key = ''
-            value.replace(reg, (match, p1) => {
+            value.replace(reg, ((match, p1) => {
                 key = p1.trim()
                 node.textContent = this.vm[key]
-            })
+            }))
             new Watcher(this.vm, key, () => {
                 node.textContent = this.vm[key]
             })
@@ -67,7 +67,7 @@ class Compiler {
     }
     modelUpdater(node, key) {
         node.value = this.vm[key]
-        window.addEventListener('input', () => {
+        node.addEventListener('input', () => {
             this.vm[key] = node.value
         })
         new Watcher(this.vm, key, () => {
