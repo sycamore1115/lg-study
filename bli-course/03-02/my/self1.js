@@ -1,5 +1,5 @@
 /**
-读 vue 源码
+读 vue 源码1
 
 1. vue 源码的下载和目录
 项目地址：https://github.com/vuejs/vue
